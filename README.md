@@ -86,7 +86,24 @@ cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk
     ./bin/scripts/deploy-pipeline-stack.sh
     ```
 
+Both ECS Services (Low Capacity & High Capacity) along with AWS CodePipeline are deployed to the AWS Account. Please note, Low Capacity ECS Service will always have tasks running. During an active deployment, it will tasks running the new code changes and once completed it will match with High Capacity service.
+
+## Start a deployment
+
+Make a code change and commit to AWS CodeCommit repo. It will kick off the deployment and wait for Manual approval step.
+
+Simulate the load by running the below script, it will post 100 messages to the SQS Queue.
+
+```shell
+./bin/scripts/send-sqs-message.sh
+```
+
+You would notice messages are being processed by ECS Tasks running in both Low Capacity & High Capacity services. As Low Capacity service is running new version of the code, you can safely test the changes before manually approving the change in CodePipeline.
+
+
 ## Cleanup
+
+To avoid ongoing charges, you can delete the infrastructure using the below command:
 
 ```shell
 ./bin/scripts/destroy.sh
