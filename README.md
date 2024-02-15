@@ -6,9 +6,9 @@ This repository consists AWS Cloud Development Kit (CDK) code for `Canary Deploy
 
 * [Outcome](#outcome)
 * [What are we building?](#what-are-we-building)
-* [Why do we need this?](#why-do-i-need-this)
+* [Why do we need this?](#why-do-we-need-this)
 * [What are the pre-requisites?](#what-are-the-pre-requisites)
-* [How can we deploy the stack?](#how-can-i-deploy-the-stack)
+* [How can we deploy the stack?](#how-can-we-deploy-the-stack)
 * [Cleanup](#cleanup)
 * [Security](#security)
 * [License](#license)
@@ -43,9 +43,9 @@ This solution will enable your teams to build and deploy CI/CD pipeline to imple
 
 ```shell
 brew install jq
-npm install -g -f aws-cdk@2.87.0
+npm install -g -f aws-cdk@2.124.0
 git clone https://github.com/aws-solutions-library-samples/guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws.git
-cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk
+cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/
 ```
 * You have configured AWS CLI using `aws configure`
 * You have the set the `AWS_REGION` within `aws configure`
@@ -57,6 +57,7 @@ cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk
 
 * Install dependencies and build
     ```shell
+    cd ./cdk
     npm install
     npm run build
     npm run test

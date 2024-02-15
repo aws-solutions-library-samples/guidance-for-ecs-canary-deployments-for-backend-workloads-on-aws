@@ -13,3 +13,7 @@ cdk.out
 # IDE
 .idea
 .DS_Store
+
+# Ash
+aggregated_results.txt
+ash_cf2cdk_output/

@@ -33,25 +33,30 @@ export class EcsCanaryRoles extends Construct {
             assumedBy: new ServicePrincipal('codebuild.amazonaws.com')
         });
 
-        const
-            inlinePolicyForCodeBuild = new iam.PolicyStatement({
-                effect: Effect.ALLOW,
-                actions: [
-                    's3:PutObject',
-                    's3:GetObject',
-                    's3:GetObjectVersion',
-                    's3:GetBucketAcl',
-                    's3:GetBucketLocation',
-                    'ecr:BatchCheckLayerAvailability',
-                    'ecr:CompleteLayerUpload',
-                    'ecr:GetAuthorizationToken',
-                    'ecr:InitiateLayerUpload',
-                    'ecr:PutImage',
-                    'ecr:UploadLayerPart',
-                ],
-                resources: ['*']
-            });
-        this.codeBuildRole.addToPolicy(inlinePolicyForCodeBuild);
+        this.codeBuildRole.addToPolicy(new iam.PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                's3:PutObject',
+                's3:GetObject',
+                's3:GetObjectVersion',
+                's3:GetBucketAcl',
+                's3:GetBucketLocation'
+            ],
+            resources: ['arn:aws:s3:::*/*', 'arn:aws:s3:::*']
+        }));
+
+        this.codeBuildRole.addToPolicy(new iam.PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                'ecr:BatchCheckLayerAvailability',
+                'ecr:CompleteLayerUpload',
+                'ecr:GetAuthorizationToken',
+                'ecr:InitiateLayerUpload',
+                'ecr:PutImage',
+                'ecr:UploadLayerPart',
+            ],
+            resources: ['arn:aws:ecr:'+Aws.REGION+':'+Aws.ACCOUNT_ID+':repository/*']
+        }));
 
         // IAM role for custom lambda function
         this.customLambdaServiceRole = new iam.Role(this, 'codePipelineCustomLambda', {
@@ -61,12 +66,19 @@ export class EcsCanaryRoles extends Construct {
         this.customLambdaServiceRole.addToPolicy(new iam.PolicyStatement({
             effect: Effect.ALLOW,
             actions: [
-                'codepipeline:List*',
-                'codepipeline:Get*',
-                'codepipeline:StopPipelineExecution',
+                'codepipeline:ListPipelineExecutions',
+                'codepipeline:GetPipelineState',
+				'codepipeline:StopPipelineExecution'
+            ],
+            resources: ['arn:aws:codepipeline:'+Aws.REGION+':'+Aws.ACCOUNT_ID+':*']
+        }));
+
+        this.customLambdaServiceRole.addToPolicy(new iam.PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
                 'codepipeline:PutApprovalResult'
             ],
-            resources: ['*']
+            resources: ['arn:aws:codepipeline:'+Aws.REGION+':'+Aws.ACCOUNT_ID+':*/*/*']
         }));
 
         this.customLambdaServiceRole.addToPolicy(new iam.PolicyStatement({

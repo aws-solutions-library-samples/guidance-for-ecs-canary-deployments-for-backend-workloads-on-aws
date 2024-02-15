@@ -54,5 +54,5 @@ export class CanaryPipelineStack extends cdk.Stack {
 
 const app = new cdk.App();
 new CanaryPipelineStack(app, 'CanaryPipelineStack', {
-    description: 'Builds the Canary deployment pipeline stack'
+    description: 'Guidance for ECS Canary Deployments for Backend workloads on AWS (SO12345)'
 });
