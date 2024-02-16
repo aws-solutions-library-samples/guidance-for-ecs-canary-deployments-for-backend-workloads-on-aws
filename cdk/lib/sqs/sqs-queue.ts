@@ -48,10 +48,12 @@ export class SQSQueue extends Construct {
             resources: [this.queue.queueArn]
         });
 
-        const ecsTaskRole = <iam.Role> iam.Role.fromRoleArn(this, 'ecsTaskRole', props.ecsTaskRoleArn!, {
-            mutable: true
-        });
-        ecsTaskRole?.addToPolicy(inlinePolicyForEcsTasks);
+        const ecsTaskRole = iam.Role.fromRoleArn(this, 'ecsTaskRole', props.ecsTaskRoleArn!);
+
+        ecsTaskRole?.attachInlinePolicy(new iam.Policy(this, 'ecsSqsReadPolicy', {
+            policyName: 'ecsSqsReadPolicy',
+            statements: [inlinePolicyForEcsTasks]
+        }));
 
         const metric = new cloudWatch.Metric({
             namespace: 'AWS/SQS',

@@ -37,6 +37,8 @@ export class CanaryPipelineStack extends cdk.Stack {
             codeRepoName: process.env.CODE_REPO_NAME,
             ecsTaskRoleArn: process.env.ECS_TASK_ROLE_ARN,
             ecsTaskExecRoleArn: process.env.ECS_TASK_EXEC_ROLE_ARN,
+            customLambdaRoleArn: process.env.CUSTOM_LAMBDA_ROLE_ARN,
+            codeBuildRoleArn: process.env.CODE_BUILD_ROLE_ARN,
             queueName: canaryQueue.queue.queueName
         })
 

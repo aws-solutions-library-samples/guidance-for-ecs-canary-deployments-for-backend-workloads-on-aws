@@ -3,7 +3,7 @@
 
 import {CfnOutput} from 'aws-cdk-lib';
 import {Repository} from 'aws-cdk-lib/aws-ecr';
-import {Role} from 'aws-cdk-lib/aws-iam';
+import {Role, Effect, PolicyStatement} from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import {BuildEnvironmentVariableType, ComputeType, Project} from 'aws-cdk-lib/aws-codebuild';
 import ecr = require('aws-cdk-lib/aws-ecr');
@@ -32,6 +32,19 @@ export class EcsCanaryBuildImage extends Construct {
         this.ecrRepo = new ecr.Repository(this, 'ecrRepo', {
             imageScanOnPush: true
         });
+
+        props.codeBuildRole!.addToPolicy(new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                'ecr:BatchCheckLayerAvailability',
+                'ecr:CompleteLayerUpload',
+                'ecr:GetAuthorizationToken',
+                'ecr:InitiateLayerUpload',
+                'ecr:PutImage',
+                'ecr:UploadLayerPart',
+            ],
+            resources: [this.ecrRepo.repositoryArn]
+        }));
 
         // CodeCommit repository for storing the source code
         var codeRepo = new codeCommit.Repository(this, 'codeRepo', {

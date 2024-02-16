@@ -32,7 +32,9 @@ test('Canary deployment pipeline is created', () => {
         codeBuildProjectName: ecsCanaryBuildImage.codeBuildProject.projectName,
         codeRepoName: 'books',
         ecsTaskRoleArn: ecsCanaryRoles.ecsTaskRole.roleArn,
-        ecsTaskExecRoleArn: ecsCanaryRoles.ecsExecutionTaskRole.roleArn
+        ecsTaskExecRoleArn: ecsCanaryRoles.ecsExecutionTaskRole.roleArn,
+        codeBuildRoleArn: ecsCanaryRoles.codeBuildRole.roleArn,
+        customLambdaRoleArn: ecsCanaryRoles.customLambdaServiceRole.roleArn
     })
 
     // THEN

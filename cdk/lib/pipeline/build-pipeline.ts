@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT-0
 
 import { Duration } from 'aws-cdk-lib';
-import {AnyPrincipal, Effect, ServicePrincipal} from 'aws-cdk-lib/aws-iam';
-import {BlockPublicAccess, BucketEncryption} from 'aws-cdk-lib/aws-s3';
-import {EcsCanaryService} from '..';
-import {ICluster} from 'aws-cdk-lib/aws-ecs';
-import {IVpc} from 'aws-cdk-lib/aws-ec2';
+import { AnyPrincipal, Effect, Role, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { BlockPublicAccess, BucketEncryption } from 'aws-cdk-lib/aws-s3';
+import { EcsCanaryService } from '..';
+import { ICluster } from 'aws-cdk-lib/aws-ecs';
+import { IVpc } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import iam = require('aws-cdk-lib/aws-iam');
 import s3 = require('aws-cdk-lib/aws-s3');
@@ -15,6 +15,7 @@ import codeCommit = require('aws-cdk-lib/aws-codecommit');
 import codeBuild = require('aws-cdk-lib/aws-codebuild');
 import codePipeline = require('aws-cdk-lib/aws-codepipeline');
 import codePipelineActions = require('aws-cdk-lib/aws-codepipeline-actions');
+import { lambda } from 'cdk-nag/lib/rules';
 
 
 export interface EcsCanaryPipelineProps {
@@ -23,6 +24,8 @@ export interface EcsCanaryPipelineProps {
     readonly codeBuildProjectName?: string;
     readonly ecsTaskRoleArn?: string;
     readonly ecsTaskExecRoleArn?: string;
+    readonly customLambdaRoleArn?: string;
+    readonly codeBuildRoleArn?: string;
     readonly apiName?: string;
     readonly vpc?: IVpc;
     readonly cluster?: ICluster;
@@ -40,36 +43,38 @@ export class EcsCanaryPipeline extends Construct {
         const codeRepo = codeCommit.Repository.fromRepositoryName(this, 'codeRepo', props.codeRepoName!);
         const ecrRepo = ecr.Repository.fromRepositoryName(this, 'ecrRepo', props.ecrRepoName!);
         const codeBuildProject = codeBuild.Project.fromProjectName(this, 'codeBuild', props.codeBuildProjectName!);
-        const ecsTaskRole = iam.Role.fromRoleArn(this, 'ecsTaskRole', props.ecsTaskRoleArn!);
-        const ecsTaskExecRole = iam.Role.fromRoleArn(this, 'ecsTaskExecRole', props.ecsTaskExecRoleArn!);
+        const ecsTaskRole = Role.fromRoleArn(this, 'ecsTaskRole', props.ecsTaskRoleArn!);
+        const ecsTaskExecRole = Role.fromRoleArn(this, 'ecsTaskExecRole', props.ecsTaskExecRoleArn!);
+        const codeBuildRole = Role.fromRoleArn(this, 'codeBuildRoleImport', props.codeBuildRoleArn!);
+        const lambdaRole = Role.fromRoleArn(this, 'customLambdaRoleImport', props.customLambdaRoleArn!);
 
-        const codePipelineRole = new iam.Role(this, 'codePipelineRole', {
-            assumedBy: new ServicePrincipal('codepipeline.amazonaws.com')
-        });
+        // const codePipelineRole = new iam.Role(this, 'codePipelineRole', {
+        //     assumedBy: new ServicePrincipal('codepipeline.amazonaws.com')
+        // });
 
-        const codePipelinePolicy = new iam.PolicyStatement({
-            effect: Effect.ALLOW,
-            actions: [
-                'iam:PassRole',
-                'sts:AssumeRole',
-                'codecommit:Get*',
-                'codecommit:List*',
-                'codecommit:GitPull',
-                'codecommit:UploadArchive',
-                'codecommit:CancelUploadArchive',
-                'codebuild:BatchGetBuilds',
-                'codebuild:StartBuild',
-                'codedeploy:CreateDeployment',
-                'codedeploy:Get*',
-                'codedeploy:RegisterApplicationRevision',
-                's3:Get*',
-                's3:List*',
-                's3:PutObject'
-            ],
-            resources: ['*']
-        });
+        // const codePipelinePolicy = new iam.PolicyStatement({
+        //     effect: Effect.ALLOW,
+        //     actions: [
+        //         'iam:PassRole',
+        //         'sts:AssumeRole',
+        //         'codecommit:Get*',
+        //         'codecommit:List*',
+        //         'codecommit:GitPull',
+        //         'codecommit:UploadArchive',
+        //         'codecommit:CancelUploadArchive',
+        //         'codebuild:BatchGetBuilds',
+        //         'codebuild:StartBuild',
+        //         'codedeploy:CreateDeployment',
+        //         'codedeploy:Get*',
+        //         'codedeploy:RegisterApplicationRevision',
+        //         's3:Get*',
+        //         's3:List*',
+        //         's3:PutObject'
+        //     ],
+        //     resources: ['*']
+        // });
 
-        codePipelineRole.addToPolicy(codePipelinePolicy);
+        // codePipelineRole.addToPolicy(codePipelinePolicy);
 
         const sourceArtifact = new codePipeline.Artifact('sourceArtifact');
         const buildArtifact = new codePipeline.Artifact('buildArtifact');
@@ -122,7 +127,7 @@ export class EcsCanaryPipeline extends Construct {
 
         // Code Pipeline - CloudWatch trigger event is created by CDK
         this.pipeline = new codePipeline.Pipeline(this, 'ecsCanary', {
-            role: codePipelineRole,
+            //role: codePipelineRole,
             artifactBucket: artifactsBucket,
             stages: [
                 {
@@ -179,6 +184,41 @@ export class EcsCanaryPipeline extends Construct {
                 }
             ]
         });
+
+        codeBuildRole?.attachInlinePolicy(new iam.Policy(this, 'codeBuildS3ArtifactPolicy', {
+            policyName: 'codeBuildS3ArtifactPolicy',
+            statements: [
+                new PolicyStatement({
+                effect: Effect.ALLOW,
+                actions: [
+                    's3:GetBucketLocation',
+                    's3:GetBucketAcl',
+                    's3:GetObject',
+                    's3:GetObjectVersion',
+                    's3:PutObject',
+                    's3:PutObjectLegalHold',
+                    's3:PutObjectRetention',
+                    's3:PutObjectTagging',
+                    's3:PutObjectVersionTagging'
+                ],
+                resources: [artifactsBucket.arnForObjects('*'), artifactsBucket.bucketArn]
+            })]
+        }));
+
+        lambdaRole?.attachInlinePolicy(new iam.Policy(this, 'lambdaCodePipelinePolicy', {
+            policyName: 'lambdaCodePipelinePolicy',
+            statements: [
+                new PolicyStatement({
+                    effect: Effect.ALLOW,
+                    actions: [
+                        'codepipeline:ListPipelineExecutions',
+                        'codepipeline:GetPipelineState',
+                        'codepipeline:StopPipelineExecution',
+                        'codepipeline:PutApprovalResult'
+                    ],
+                    resources: [this.pipeline.pipelineArn, this.pipeline.pipelineArn + "/*/*"]
+            })]
+        }));
     }
 
 }
