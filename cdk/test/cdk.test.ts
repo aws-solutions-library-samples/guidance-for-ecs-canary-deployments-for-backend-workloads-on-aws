@@ -39,7 +39,7 @@ test('Canary deployment pipeline is created', () => {
 
     // THEN
     const template = Template.fromStack(stack);
-    template.resourceCountIs('AWS::IAM::Role', 11);
+    template.resourceCountIs('AWS::IAM::Role', 12);
     template.resourceCountIs('AWS::ECR::Repository', 1);
     template.resourceCountIs('AWS::CodeCommit::Repository', 1);
     template.resourceCountIs('AWS::CodeBuild::Project', 1);

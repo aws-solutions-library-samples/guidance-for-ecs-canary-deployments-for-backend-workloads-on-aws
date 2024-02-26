@@ -25,6 +25,8 @@ export class EcsCanaryCluster extends Construct {
             vpcName: 'ecsDemoVPC'
         });
 
+        this.vpc.addFlowLog('ecsDemoVPCFlowLogs', {});
+
         this.cluster = new ecs.Cluster(this, 'ecsDemoCluster', {
             vpc: this.vpc,
             containerInsights: true,

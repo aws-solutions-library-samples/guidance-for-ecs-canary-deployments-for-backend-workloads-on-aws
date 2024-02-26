@@ -25,7 +25,8 @@ export class SQSQueue extends Construct {
         this.dlq = new sqs.Queue(this, 'AppDLQueue', {
             queueName: 'sample-app-dlq',
             visibilityTimeout: Duration.seconds(300),
-            retentionPeriod: Duration.minutes(60)
+            retentionPeriod: Duration.minutes(60),
+            enforceSSL: true
         })
 
         this.queue = new sqs.Queue(this, 'AppQueue', {
@@ -34,7 +35,8 @@ export class SQSQueue extends Construct {
             deadLetterQueue: {
                 queue: this.dlq,
                 maxReceiveCount: 1
-            }
+            },
+            enforceSSL: true            
         })
 
         const inlinePolicyForEcsTasks = new iam.PolicyStatement({
