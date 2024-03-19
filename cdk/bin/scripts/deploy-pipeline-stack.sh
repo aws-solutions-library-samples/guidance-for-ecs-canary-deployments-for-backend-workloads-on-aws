@@ -33,6 +33,11 @@ do
   sleep 10
   BUILD_STATUS=$(aws codebuild batch-get-builds --ids $BUILD_ID --query 'builds[*].buildStatus' --output text | xargs)
   echo -e "Awaiting SUCCEEDED status....Current status: ${BUILD_STATUS}"
+  if [ "$BUILD_STATUS" == "FAILED" ]
+  then
+    echo "CodeBuild is failed to complete, look at the logs to investigate further."
+    exit 1;
+  fi
 done
 
 echo -e "Completed CodeBuild...ECR image is available"

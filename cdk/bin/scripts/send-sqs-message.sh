@@ -22,7 +22,7 @@ send-message-to-sqs() {
 	aws sqs send-message-batch --queue-url $endPoint --entries "[{\"Id\": \"$key-1\", \"MessageBody\": \"Test Msg: $key-1\"},{\"Id\": \"$key-2\", \"MessageBody\": \"Test Msg: $key-2\"},{\"Id\": \"$key-3\", \"MessageBody\": \"Test Msg: $key-3\"},{\"Id\": \"$key-4\", \"MessageBody\": \"Test Msg: $key-4\"},{\"Id\": \"$key-5\", \"MessageBody\": \"Test Msg: $key-5\"}]"
 }
 
-queueUrl=$(aws sqs get-queue-url --queue-name helloworld --query 'QueueUrl' --output text)
+queueUrl=$(aws sqs get-queue-url --queue-name sample-app --query 'QueueUrl' --output text)
 
 echo "Queue URL:  $queueUrl"
 

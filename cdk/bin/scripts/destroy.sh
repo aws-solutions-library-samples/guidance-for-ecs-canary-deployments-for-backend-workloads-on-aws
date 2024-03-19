@@ -16,6 +16,7 @@ export CIDR_RANGE="10.0.0.0/16"
 export CODE_REPO_URL=$(aws cloudformation describe-stacks --stack-name CanaryContainerImageStack --query 'Stacks[*].Outputs[?ExportName==`repoCloneUrlHttp`].OutputValue' --output text)
 export ECR_REPO_NAME=$(aws cloudformation describe-stacks --stack-name CanaryContainerImageStack --query 'Stacks[*].Outputs[?ExportName==`ecsCanaryEcrRepoName`].OutputValue' --output text)
 export CODE_BUILD_PROJECT_NAME=$(aws cloudformation describe-stacks --stack-name CanaryContainerImageStack --query 'Stacks[*].Outputs[?ExportName==`canaryCodeBuildProjectName`].OutputValue' --output text)
+export CODE_BUILD_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name CanaryContainerImageStack --query 'Stacks[*].Outputs[?ExportName==`canaryCodeBuildProjectRoleArn`].OutputValue' --output text)
 export ECS_TASK_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name CanaryContainerImageStack --query 'Stacks[*].Outputs[?ExportName==`ecsCanaryTaskRoleArn`].OutputValue' --output text)
 export ECS_TASK_EXEC_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name CanaryContainerImageStack --query 'Stacks[*].Outputs[?ExportName==`ecsCanaryTaskExecRoleArn`].OutputValue' --output text)
 export CUSTOM_LAMBDA_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name CanaryContainerImageStack --query 'Stacks[*].Outputs[?ExportName==`customLambdaRoleArn`].OutputValue' --output text)

@@ -37,7 +37,7 @@ export class EcsCanaryService extends Construct {
         const taskDefinition = new ecs.FargateTaskDefinition(this, 'apiTaskDefinition', {
             family: props.apiName,
             cpu: 256,
-            memoryLimitMiB: 1024,
+            memoryLimitMiB: 512,
             taskRole: props.ecsTaskRole,
             executionRole: props.ecsTaskExecutionRole,
         });
