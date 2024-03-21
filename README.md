@@ -1,6 +1,6 @@
 # Guidance for Canary deployments for Queue processing workloads in Amazon ECS
 
-This repository consists AWS Cloud Development Kit (CDK) code for `Canary Deployments for Queue processing workloads in Amazon ECS` solution guidance.
+This repository consists AWS Cloud Development Kit (CDK) code for `Canary Deployments for Queue processing workloads in Amazon ECS` guidance.
 
 #### Table of Contents
 
