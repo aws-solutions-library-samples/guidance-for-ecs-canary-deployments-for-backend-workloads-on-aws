@@ -27,7 +27,7 @@ This solution will enable your teams to build and deploy CI/CD pipeline to imple
 * [Amazon Simple Query Service - SQS](https://aws.amazon.com/sqs/) based Consumer sample application is deployed into [AWS ECS Fargate](https://aws.amazon.com/fargate/)
 * After sucessful application release testing, both services will run same latest version of the application code
 
-**`⚠️ Warning`** This guidance will utilize [sample-app](sample-app) sample code to demo the Canary release, feel free to replace it with your own application. `⚠️`
+**`⚠️ Warning`** This guidance will utilize [sample-app](https://github.com/aws-solutions-library-samples/guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/tree/main/sample-app) sample code to demo the Canary release, feel free to replace it with your own application. `⚠️`
 
 ## High Level Architecture
 
@@ -159,7 +159,7 @@ cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/
     ```
 
 * Push the sample application source code to AWS CodeCommit repository:
-  * The source code is available [here](sample-app/README.md)
+  * The source code is available [here](sample-app)
   * The [buildspec.yml](sample-app/buildspec.yml) has placeholders for the variables. 
     ```shell
     export AWS_DEFAULT_REGION=$(aws configure get region)
