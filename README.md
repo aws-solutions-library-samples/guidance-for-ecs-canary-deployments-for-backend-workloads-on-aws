@@ -34,16 +34,16 @@ This solution will enable your teams to build and deploy CI/CD pipeline to imple
 ![canary-pipeline](./ecs-canary-arch.png)
 
 ### Architecture Components and steps
-1. Developer commits new code changes to Software Configuration Management (SCM) tools such as AWS CodeCommit.
-2. AWS CodePipeline watches for new code changes and initiates a CI/CD pipeline to build a new container image using AWS CodeBuild.
-3. After the image is built, AWS CodePipeline will initiate an ECS Deploy action.
-4. ECS Deploy Action will deploy the change to Low Capacity ECS Service to start the Canary process and wait for a manual approval.
-5. Low Capacity ECS Service will start processing messages from the SQS Queue using new application version ("Canary") while High Capacity will still be using the existing version.
-6. Once the changes are validated, team can manually approve the Canary release to propagate the change to High Capacity ECS Service.
+1. Developer commits new code changes to Software Configuration Management (SCM) tools such as [AWS CodeCommit](https://aws.amazon.com/codecommit/).
+2. [AWS CodePipeline](https://aws.amazon.com/codepipeline/) watches for new code changes and initiates a CI/CD pipeline to build a new container image using [AWS CodeBuild](https://aws.amazon.com/codebuild/).
+3. After the container image is built, AWS CodePipeline will initiate an [ECS Deploy action](https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECS.html#action-reference-ECS-type) .
+4. ECS Deploy Action will deploy the new container image to Low Capacity [ECS Service](https://aws.amazon.com/ecs/) to start a Canary process and wait for a manual approval.
+5. Low Capacity ECS Service will start processing messages from the [Amazon Simple Queue Service - SQS](https://aws.amazon.com/sqs/) using new application version ("Canary") while High Capacity will still be serving the existing application version.
+6. Once the changes are successfuly validated, team can manually approve the Canary release to propagate the code change to High Capacity ECS Service.
 7. ECS Deploy Action will deploy the change to High Capacity ECS Service to complete deployment process.
 8. New application version is deployed to both Low and High Capacity ECS Services to process messages from SQS Queue.
-9. To monitor issues from new application version, failures in processing SQS messages are sent to SQS Dead letter Queue (DLQ).
-10. Amazon CloudWatch Alarm will monitor the SQS DLQ depth and trigger AWS Lambda function to stop and rollback the Canary release.
+9. To monitor potental issues in the newl application version, failures in processing SQS messages are sent to SQS Dead letter Queue (DLQ).
+10. [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) Alarm will monitor the SQS DLQ depth and trigger [AWS Lambda](https://aws.amazon.com/lambda/) function to stop and rollback the Canary release.
 
 ### AWS Services in this Guidance
 The following AWS Services are used in this Guidance:
@@ -54,7 +54,7 @@ The following AWS Services are used in this Guidance:
 - [AWS Fargate](https://aws.amazon.com/fargate/)
 - [AWS CodePipeline](https://aws.amazon.com/codepipeline/)
 - [AWS CodeBuild](https://aws.amazon.com/codebuild/)
-- [AWS CoodeCommit](https://aws.amazon.com/codecommit/)
+- [AWS CodeCommit](https://aws.amazon.com/codecommit/)
 - [AWS Lambda](https://aws.amazon.com/lambda/)
 - [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/)
 
@@ -130,7 +130,8 @@ cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/
 * Deploy the AWS CodeCommit and AWS CodeBuild resources - run the following command:
 
     ```shell
-    ./cdk/bin/scripts/deploy-image-stack.sh
+    cd ./guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk/
+    ./bin/scripts/deploy-image-stack.sh
     ```
     Output
     ```output
@@ -184,8 +185,8 @@ cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/
 
 * Deploy the AWS CodePipeline, Amazon ECS resources. Run the following commands:
     ```shell
-    cd ../guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk/
-    ./cdk/bin/scripts/deploy-pipeline-stack.sh
+    cd ./guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk/
+    ./bin/scripts/deploy-pipeline-stack.sh
     ```
     
     Output
@@ -225,7 +226,8 @@ Make a source code change in your local folder and commit changes to AWS CodeCom
 Simulate the load by running the command script below, it will post 100 messages to the Amazon SQS Queue.
 
 ```shell
-./cdk/bin/scripts/send-sqs-message.sh
+cd ./guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk/
+./bin/scripts/scripts/send-sqs-message.sh
 ```
 
 Output
@@ -259,7 +261,8 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 To avoid ongoing charges, you can delete the guidance infrastructure running the below command:
 
 ```shell
-./cdk/bin/scripts/destroy.sh
+cd ./guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk/
+./bin/scripts/destroy.sh
 ```
 
 Output
