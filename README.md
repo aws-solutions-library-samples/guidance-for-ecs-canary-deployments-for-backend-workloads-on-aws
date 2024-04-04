@@ -258,14 +258,14 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 ## Cleanup
 
-To avoid ongoing charges, you can delete the guidance infrastructure running the below command:
+To avoid ongoing charges, you can delete the guidance infrastructure running the command below:
 
 ```shell
 cd ./guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk/
 ./bin/scripts/destroy.sh
 ```
 
-Output
+Output:
 ```output
 Start cleanup...
 Are you sure you want to delete: CanaryPipelineStack (y/n)? y
