@@ -37,7 +37,7 @@ This solution will enable your teams to build and deploy CI/CD pipeline to imple
 1. Developer commits new code changes to Software Configuration Management (SCM) tools such as [AWS CodeCommit](https://aws.amazon.com/codecommit/).
 2. [AWS CodePipeline](https://aws.amazon.com/codepipeline/) watches for new code changes and initiates a CI/CD pipeline to build a new container image using [AWS CodeBuild](https://aws.amazon.com/codebuild/).
 3. After the container image is built, AWS CodePipeline will initiate an [ECS Deploy action](https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECS.html#action-reference-ECS-type) .
-4. ECS Deploy Action will deploy the new container image to Low Capacity [ECS Service](https://aws.amazon.com/ecs/) to start a Canary process and wait for a manual approval.
+4. ECS Deploy Action will deploy the new container image to Low Capacity [ECS Service](https://aws.amazon.com/ecs/) to start a Canary application version and wait for a manual approval.
 5. Low Capacity ECS Service will start processing messages from the [Amazon Simple Queue Service - SQS](https://aws.amazon.com/sqs/) using new application version ("Canary") while High Capacity will still be serving the existing application version.
 6. Once the changes are successfuly validated, team can manually approve the Canary release to propagate the code change to High Capacity ECS Service.
 7. ECS Deploy Action will deploy the change to High Capacity ECS Service to complete deployment process.
@@ -217,8 +217,8 @@ export REPO_BASE_DIR=$PWD
 
     ```
 
-At this point, both Amazon ECS Services (Low Capacity - `sample-app` & High Capacity - `sample-app-canary`) along with AWS CodePipeline are deployed to your AWS Account. 
-Please note that Low Capacity ("Canary") ECS Service will always have tasks running. During an active deployment, it will have ECS tasks running the new code version and, once completed, it will match versions with High Capacity service.
+At this point, both Amazon ECS Services (Low Capacity - `sample-app-canary` & High Capacity - `sample-app`) along with AWS CodePipeline are deployed to your AWS Account. 
+Please note that Low Capacity ("Canary") ECS Service will always have tasks running. During an active deployment it will have ECS tasks running the new code version and, once testing completed, it will match code versions with High Capacity service.
 
 ### Start a deployment
 
