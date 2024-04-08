@@ -5,10 +5,23 @@
 # SPDX-License-Identifier: MIT-0                                     #
 ######################################################################
 
+Help() {
+    echo 'Usage : send-sqs-message.sh <aws region>'
+    exit
+}
+
+while getopts ":h" option; do
+   case $option in
+      h)
+         Help
+         exit;;
+   esac
+done
+
 echo -e "Sending messages..."
 
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-export AWS_DEFAULT_REGION=$(aws configure get region)
+export AWS_DEFAULT_REGION="${1:-$(aws configure get region)}"
 
 send-message-to-sqs() {
 	endPoint=$1

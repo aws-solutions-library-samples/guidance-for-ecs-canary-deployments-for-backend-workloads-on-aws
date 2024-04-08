@@ -96,9 +96,10 @@ brew install jq
 npm install -g -f aws-cdk@2.124.0
 git clone https://github.com/aws-solutions-library-samples/guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws.git
 cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/
+export REPO_BASE_DIR=$PWD
 ```
 * You have configured AWS CLI using `aws configure`
-* You have the set the `AWS_REGION` within `aws configure`
+* You have the set the `AWS_REGION` within `aws configure` or explicitly pass the AWS_REGION to the deployment scripts
 * The role being used from CLI has the permissions required for resources being created by CDK
 * HTTPS (GRC) is the protocol to use with `git-remote-codecommit` (GRC). This utility provides a simple method for pushing and pulling code from CodeCommit repositories by extending Git. It is the recommended method for supporting connections made with federated access, identity providers, and temporary credentials
 * Install `git-remote-codecommit` with `pip install git-remote-codecommit`
@@ -107,7 +108,7 @@ cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/
 
 * Install dependencies, build the project, and run the test-suite. Run the following commands:
     ```shell
-    cd ./cdk
+    cd $REPO_BASE_DIR/cdk
     npm install
     npm run build
     npm run test
@@ -127,11 +128,11 @@ cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/
     Ran all test suites.
     ```
 
-* Deploy the AWS CodeCommit and AWS CodeBuild resources - run the following command:
+* Deploy the AWS CodeCommit and AWS CodeBuild resources using the following command, you can pass the CDK Image Stack name and AWS region as input arguments respectively.
 
     ```shell
-    cd ./guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk/
-    ./bin/scripts/deploy-image-stack.sh
+    cd $REPO_BASE_DIR/cdk
+    ./bin/scripts/deploy-image-stack.sh CanaryContainerImageStack us-west-2
     ```
     Output
     ```output
@@ -161,13 +162,13 @@ cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/
 
 * Push the sample application source code to AWS CodeCommit repository:
   * The source code is available [here](sample-app)
-  * The [buildspec.yml](sample-app/buildspec.yml) has placeholders for the variables. 
+  * The [buildspec.yml](sample-app/buildspec.yml) has instructions to build and push the container image to the ECR Repository. 
     ```shell
-    export AWS_DEFAULT_REGION=$(aws configure get region)
+    export AWS_DEFAULT_REGION=$(aws configure get region) #Replace with your AWS Region here
     export CODE_REPO_NAME=sample-app
     export CODE_REPO_URL=codecommit::$AWS_DEFAULT_REGION://$CODE_REPO_NAME
-    cd ../.. && git clone $CODE_REPO_URL && cd $CODE_REPO_NAME
-    cp ../guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/sample-app/* .
+    cd $REPO_BASE_DIR/.. && git clone $CODE_REPO_URL && cd $CODE_REPO_NAME
+    cp $REPO_BASE_DIR/sample-app/* .
     git checkout -b main
     git remote -v
     git add .
@@ -183,10 +184,10 @@ cd guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/
     branch 'main' set up to track 'origin/main'.
     ```
 
-* Deploy the AWS CodePipeline, Amazon ECS resources. Run the following commands:
+* Deploy the AWS CodePipeline, Amazon ECS resources. Run the following commands and pass Image Stack name and AWS region as input arguments:
     ```shell
-    cd ./guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk/
-    ./bin/scripts/deploy-pipeline-stack.sh
+    cd $REPO_BASE_DIR/cdk
+    ./bin/scripts/deploy-pipeline-stack.sh CanaryContainerImageStack us-west-2
     ```
     
     Output
@@ -226,8 +227,8 @@ Make a source code change in your local folder and commit changes to AWS CodeCom
 Simulate the load by running the command script below, it will post 100 messages to the Amazon SQS Queue.
 
 ```shell
-cd ./guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk/
-./bin/scripts/scripts/send-sqs-message.sh
+cd $REPO_BASE_DIR/cdk
+./bin/scripts/send-sqs-message.sh us-west-2
 ```
 
 Output
@@ -258,10 +259,10 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 ## Cleanup
 
-To avoid ongoing charges, you can delete the guidance infrastructure running the command below:
+To avoid ongoing charges, you can delete the guidance infrastructure running the command below, and pass the Image Stack name and AWS Region as input arguments.
 
 ```shell
-cd ./guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/cdk/
+cd $REPO_BASE_DIR/cdk CanaryContainerImageStack us-west-2
 ./bin/scripts/destroy.sh
 ```
 
