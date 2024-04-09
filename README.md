@@ -187,7 +187,7 @@ export REPO_BASE_DIR=$PWD
 * Deploy the AWS CodePipeline, Amazon ECS resources. Run the following commands and pass Image Stack name and AWS region as input arguments:
     ```shell
     cd $REPO_BASE_DIR/cdk
-    ./bin/scripts/deploy-pipeline-stack.sh CanaryPipelineStack us-west-2
+    ./bin/scripts/deploy-pipeline-stack.sh CanaryContainerImageStack us-west-2
     ```
     
     Output
