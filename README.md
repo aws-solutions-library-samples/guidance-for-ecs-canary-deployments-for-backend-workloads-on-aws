@@ -224,6 +224,8 @@ Please note that Low Capacity ("Canary") ECS Service will always have tasks runn
 
 Make a source code change in your local folder and commit changes to AWS CodeCommit repo. It will kick off the deployment and wait for Manual approval step.
 
+![manual-approval](./manual_Codepipeline_approve.png)
+
 Simulate the load by running the command script below, it will post 100 messages to the Amazon SQS Queue.
 
 ```shell
