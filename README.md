@@ -6,7 +6,7 @@ This repository consists AWS Cloud Development Kit (CDK) code for `Canary Deploy
 
 * [Outcome](#outcome)
 * [What are we building?](#what-are-we-building)
-* [High Level Architecture](#high-level-architecture)
+* [Reference Architecture](#reference-architecture)
 * [Why do we need this?](#why-do-we-need-this)
 * [Plan your deployment](#plan-your-deployment)
 * [Security](#security)
@@ -29,9 +29,9 @@ This solution will enable your teams to build and deploy CI/CD pipeline to imple
 
 **`⚠️ Warning`** This guidance will utilize [sample-app](https://github.com/aws-solutions-library-samples/guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws/tree/main/sample-app) sample code to demo the Canary release, feel free to replace it with your own application. `⚠️`
 
-## High Level Architecture
+## Reference Architecture
 
-![canary-pipeline](./ecs-canary-arch.png)
+![canary-pipeline](./ecs-canary-reference-architecture-final.png)
 
 ### Architecture Components and steps
 1. Developer commits new code changes to Software Configuration Management (SCM) tools such as [AWS CodeCommit](https://aws.amazon.com/codecommit/).
@@ -66,7 +66,7 @@ The following AWS Services are used in this Guidance:
 * You can incorporate the principle of infrastructure immutability by provisioning fresh instances when you need to make changes. In this way, you avoid configuration drift
 * You can also configure CloudWatch Alarm to monitor the Canary release and automatically rollback to production/live version in case of any errors
 
-## Plan your deployment
+## Plan your Deployment
 
 ### Cost
 You are responsible for the cost of the AWS services used while running this Guidance. As of April, 2024, the cost for running this Guidance with the default settings in the US East (N. Virginia) Region is approximately $73.34 monthly, with following assumptions.
