@@ -31,18 +31,18 @@ This solution will enable your teams to build and deploy CI/CD pipeline to imple
 
 ## Reference Architecture
 
-![canary-pipeline](./ecs-canary-reference-architecture-final.png)
+![canary-pipeline](./canary-deployments-for-queue-processing-workloads-in-amazon-ecs.png)
 
 ### Architecture Components and steps
 1. Developer commits new code changes to Software Configuration Management (SCM) tools such as [AWS CodeCommit](https://aws.amazon.com/codecommit/).
 2. [AWS CodePipeline](https://aws.amazon.com/codepipeline/) watches for new code changes and initiates a CI/CD pipeline to build a new container image using [AWS CodeBuild](https://aws.amazon.com/codebuild/).
-3. After the container image is built, AWS CodePipeline will initiate an [ECS Deploy action](https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECS.html#action-reference-ECS-type) .
-4. ECS Deploy Action will deploy the new container image to Low Capacity [ECS Service](https://aws.amazon.com/ecs/) to start a Canary application version and wait for a manual approval.
-5. Low Capacity ECS Service will start processing messages from the [Amazon Simple Queue Service - SQS](https://aws.amazon.com/sqs/) using new application version ("Canary") while High Capacity will still be serving the existing application version.
+3. After the container image incorporating the change is built, AWS CodePipeline will initiate an [ECS Deploy action](https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECS.html#action-reference-ECS-type) .
+4. ECS Deploy Action will deploy the new container image to Low Capacity [ECS Service](https://aws.amazon.com/ecs/) service to start a Canary application version and wait for a manual approval.
+5. Low Capacity ECS Service will start processing messages from the [Amazon Simple Queue Service - SQS](https://aws.amazon.com/sqs/) using new application version ("Canary") while High Capacity Service will still be serving the existing application version.
 6. Once the changes are successfuly validated, team can manually approve the Canary release to propagate the code change to High Capacity ECS Service.
 7. ECS Deploy Action will deploy the change to High Capacity ECS Service to complete deployment process.
 8. New application version is deployed to both Low and High Capacity ECS Services to process messages from SQS Queue.
-9. To monitor potental issues in the newl application version, failures in processing SQS messages are sent to SQS Dead letter Queue (DLQ).
+9. To monitor potental issues in the new application version, failures in processing SQS messages are sent to [SQS Dead letter Queue (DLQ)](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
 10. [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) Alarm will monitor the SQS DLQ depth and trigger [AWS Lambda](https://aws.amazon.com/lambda/) function to stop and rollback the Canary release.
 
 ### AWS Services in this Guidance
@@ -60,9 +60,9 @@ The following AWS Services are used in this Guidance:
 
 ## Why do we need this?
 
-* With a Canary deployment, you provision a new set of Amazon ECS tasks (Canary Service) on which the latest version of your application is deployed
-* Canary deployments allow you to test the new application version before sending production traffic to it without disrupting the existing environment
-* Once the testing is completed, you can approve the manual action to release the change to the production ECS tasks
+* With a Canary deployment, you provision a new set of Amazon ECS tasks ("Canary" Service) on which the latest version of your application is deployed
+* Canary deployments allow you to test the new application version before directing all production traffic to it without disrupting the existing environment
+* Once the testing is completed, you can approve the manual action to release the change to the production ECS service.
 * You can incorporate the principle of infrastructure immutability by provisioning fresh instances when you need to make changes. In this way, you avoid configuration drift
 * You can also configure CloudWatch Alarm to monitor the Canary release and automatically rollback to production/live version in case of any errors
 
