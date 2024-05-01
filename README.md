@@ -21,7 +21,7 @@ This solution will enable your teams to build and deploy CI/CD pipeline to imple
 
 ## What are we building?
 
-* Two Services will be deployed in an [Amazon ECS Cluster](https://aws.amazon.com/ecs/), one is a Low Capacity service for handling the [Canary testing](https://www.optimizely.com/optimization-glossary/canary-testing/) traffic and the other is High Capacity service to handle the live traffic
+* Two Services will be deployed in an [Amazon ECS Cluster](https://aws.amazon.com/ecs/), one is a low-capacity service for handling the [Canary testing](https://www.optimizely.com/optimization-glossary/canary-testing/) traffic and the other is high-capacity service to handle the live traffic
 * [AWS CodePipeline](https://aws.amazon.com/codepipeline/) will be used for executing Canary releases using [AWS CodeCommit](https://aws.amazon.com/codecommit/), [AWS CodeBuild](https://aws.amazon.com/codebuild/), ECS Deployment provider via manual approval stage
 * The built container images will be stored in the [Amazon Elastic Container Registry](https://aws.amazon.com/ecr/)
 * [Amazon Simple Query Service - SQS](https://aws.amazon.com/sqs/) based Consumer sample application is deployed into [AWS ECS Fargate](https://aws.amazon.com/fargate/)
@@ -37,13 +37,13 @@ This solution will enable your teams to build and deploy CI/CD pipeline to imple
 1. Developer commits new code changes to Software Configuration Management (SCM) tools such as [AWS CodeCommit](https://aws.amazon.com/codecommit/).
 2. [AWS CodePipeline](https://aws.amazon.com/codepipeline/) watches for new code changes and initiates a CI/CD pipeline to build a new container image using [AWS CodeBuild](https://aws.amazon.com/codebuild/).
 3. After the container image incorporating the change is built, AWS CodePipeline will initiate an [ECS Deploy action](https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECS.html#action-reference-ECS-type) .
-4. ECS Deploy Action will deploy the new container image to Low Capacity [ECS Service](https://aws.amazon.com/ecs/) service to start a Canary application version and wait for a manual approval.
-5. Low Capacity ECS Service will start processing messages from the [Amazon Simple Queue Service - SQS](https://aws.amazon.com/sqs/) using new application version ("Canary") while High Capacity Service will still be serving the existing application version.
-6. Once the changes are successfuly validated, team can manually approve the Canary release to propagate the code change to High Capacity ECS Service.
-7. ECS Deploy Action will deploy the change to High Capacity ECS Service to complete deployment process.
-8. New application version is deployed to both Low and High Capacity ECS Services to process messages from SQS Queue.
-9. To monitor potental issues in the new application version, failures in processing SQS messages are sent to [SQS Dead letter Queue (DLQ)](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
-10. [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) Alarm will monitor the SQS DLQ depth and trigger [AWS Lambda](https://aws.amazon.com/lambda/) function to stop and rollback the Canary release.
+4. ECS Deploy Action will deploy the new container image to low-capacity [ECS Service](https://aws.amazon.com/ecs/) service to start a Canary application version and wait for a manual approval.
+5. low-capacity ECS Service will start processing messages from the [Amazon Simple Queue Service - SQS](https://aws.amazon.com/sqs/) using new application version ("Canary") while high-capacity Service will still be serving the existing application version.
+6. Once the changes are successfuly validated, team can manually approve the Canary release to propagate the code change to high-capacity ECS Service.
+7. ECS Deploy Action will deploy the change to high-capacity ECS Service to complete deployment process.
+8. New application version is deployed to both low and high-capacity ECS Services to process messages from SQS Queue.
+9. For monitoring potental issues in the new application version, failures in processing SQS messages are sent to [SQS Dead letter Queue (DLQ)](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
+10. [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) Alarm will monitor the SQS DLQ depth and trigger [AWS Lambda](https://aws.amazon.com/lambda/) function to stop and rollback the Canary release to production/live version in case of failure.
 
 ### AWS Services in this Guidance
 The following AWS Services are used in this Guidance:
@@ -60,8 +60,8 @@ The following AWS Services are used in this Guidance:
 
 ## Why do we need this?
 
-* With a Canary deployment, you provision a new set of Amazon ECS tasks ("Canary" Service) on which the latest version of your application is deployed
-* Canary deployments allow you to test the new application version before directing all production traffic to it without disrupting the existing environment
+* With a Canary deployment, you provision a new set of Amazon ECS tasks ("Canary" Service) which deploy the latest version of your application.
+* Canary deployments allow you to test the new application version before directing all  traffic to it without disrupting the existing production environment
 * Once the testing is completed, you can approve the manual action to release the change to the production ECS service.
 * You can incorporate the principle of infrastructure immutability by provisioning fresh instances when you need to make changes. In this way, you avoid configuration drift
 * You can also configure CloudWatch Alarm to monitor the Canary release and automatically rollback to production/live version in case of any errors
@@ -75,8 +75,8 @@ You are responsible for the cost of the AWS services used while running this Gui
 
 | Region | Description | Service | Monthly | Assumptions |
 | --------------------| ----------------- | -------------------------------| -------------------|----------------|
-| US East (N. Virginia) | High Capacity ECS Service           |   AWS Fargate                          | $27.03                | Operating system (Linux), CPU Architecture (x86), Average duration (1 days), Number of tasks or pods (3 per day), Amount of ephemeral storage allocated for Amazon ECS (20 GB) |
-| US East (N. Virginia)  |  Low Capacity ECS Service           |   AWS Fargate                          | $9.01                | Operating system (Linux), CPU Architecture (x86), Average duration (1 days), Number of tasks or pods (1 per day), Amount of ephemeral storage allocated for Amazon ECS (20 GB) |
+| US East (N. Virginia) | high-capacity ECS Service           |   AWS Fargate                          | $27.03                | Operating system (Linux), CPU Architecture (x86), Average duration (1 days), Number of tasks or pods (3 per day), Amount of ephemeral storage allocated for Amazon ECS (20 GB) |
+| US East (N. Virginia)  |  low-capacity ECS Service           |   AWS Fargate                          | $9.01                | Operating system (Linux), CPU Architecture (x86), Average duration (1 days), Number of tasks or pods (1 per day), Amount of ephemeral storage allocated for Amazon ECS (20 GB) |
 | US East (N. Virginia) |  CodeBuild project           |   AWS CodeBuild                          | $3                | Amazon CodeBuild Compute Type (On-Demand EC2), Number of builds in a month (30), Operating system (Linux), Compute instance type (general1.large) |
 | US East (N. Virginia) | Canary CodePipeline           |   AWS CodePipeline                           | $0            | Number of active pipelines used per account per month (1) |
 | US East (N. Virginia) |  Deployment Lambda             |   AWS Lambda                      | $0                | Invoke Mode (Buffered), Architecture (x86), Architecture (x86), Number of requests (30 per month), Amount of ephemeral storage allocated (512 MB) |
@@ -217,8 +217,8 @@ export REPO_BASE_DIR=$PWD
 
     ```
 
-At this point, both Amazon ECS Services (Low Capacity - `sample-app-canary` & High Capacity - `sample-app`) along with AWS CodePipeline are deployed to your AWS Account. 
-Please note that Low Capacity ("Canary") ECS Service will always have tasks running. During an active deployment it will have ECS tasks running the new code version and, once testing completed, it will match code versions with High Capacity service.
+At this point, both Amazon ECS Services (low-capacity - `sample-app-canary` & high-capacity - `sample-app`) along with AWS CodePipeline are deployed to your AWS Account. 
+Please note that low-capacity ("Canary") ECS Service will always have tasks running. During an active deployment it will have ECS tasks running the new code version and, once testing completed, it will match code versions with high-capacity service.
 
 ### Start a deployment
 
@@ -240,12 +240,12 @@ Queue URL:  https://sqs.us-west-2.amazonaws.com/123456789012/sample-app
 ....
 ```
 
-You would notice messages are being processed by ECS Tasks running in both Low Capacity & High Capacity services.
+You would notice messages are being processed by ECS Tasks running in both low-capacity & high-capacity services.
 ```output
 validate that `sample-app-canary` Canary service processes messages containing "Body: "Test Msg: 2-5"....
 afterwards validate that `sample-app` main service processes messages as well with "Body: "Test Msg: 2-5", 
 ```
-As Low Capacity ("Canary") ECS service is running new version of the code, you can safely test the changes before manually approving the change in AWS CodePipeline.
+As low-capacity ("Canary") ECS service is running new version of the code, you can safely test the changes before manually approving the change in AWS CodePipeline.
 
 ## Security
 
@@ -309,7 +309,7 @@ Please keep in mind that all scripts and configuration files provided in this Gu
 
 This Guidance has been successfully tested with values of those parameters used in the sample code in the [repository project](https://github.com/aws-solutions-library-samples/guidance-for-ecs-canary-deployments-for-backend-workloads-on-aws). This Guidance includes a `sample-app` application which is a SQS processor, replace this with your own application or modify the AWS CodePipeline source stage to point to your SCM repository.
 
-This Guidance deploys 3 ECS tasks in High capacity ECS service and 1 ECS task in Low capacity ECS service for canary testing. You can update those values in [`build-pipeline.ts`](cdk/lib/pipeline/build-pipeline.ts)
+This Guidance deploys 3 ECS tasks in high-capacity ECS service and 1 ECS task in low-capacity ECS service for canary testing. You can update those values in [`build-pipeline.ts`](cdk/lib/pipeline/build-pipeline.ts)
 
 ### Troubleshooting
 
