@@ -75,15 +75,15 @@ You are responsible for the cost of the AWS services used while running this Gui
 
 | Region | Description | Service | Monthly | Assumptions |
 | --------------------| ----------------- | -------------------------------| -------------------|----------------|
-| US East (N. Virginia) | high-capacity ECS Service           |   AWS Fargate                          | $27.03                | Operating system (Linux), CPU Architecture (x86), Average duration (1 days), Number of tasks or pods (3 per day), Amount of ephemeral storage allocated for Amazon ECS (20 GB) |
-| US East (N. Virginia)  |  low-capacity ECS Service           |   AWS Fargate                          | $9.01                | Operating system (Linux), CPU Architecture (x86), Average duration (1 days), Number of tasks or pods (1 per day), Amount of ephemeral storage allocated for Amazon ECS (20 GB) |
+| US East (N. Virginia) | high-capacity ECS Service           |   AWS Fargate                          | $31.89                | Operating system (Linux), CPU Architecture (x86), Average duration (1 days), Number of tasks or pods (3 per day), Amount of ephemeral storage allocated for Amazon ECS (20 GB) |
+| US East (N. Virginia)  |  low-capacity ECS Service           |   AWS Fargate                          | $10.64                | Operating system (Linux), CPU Architecture (x86), Average duration (1 days), Number of tasks or pods (1 per day), Amount of ephemeral storage allocated for Amazon ECS (20 GB) |
 | US East (N. Virginia) |  CodeBuild project           |   AWS CodeBuild                          | $3                | Amazon CodeBuild Compute Type (On-Demand EC2), Number of builds in a month (30), Operating system (Linux), Compute instance type (general1.large) |
 | US East (N. Virginia) | Canary CodePipeline           |   AWS CodePipeline                           | $0            | Number of active pipelines used per account per month (1) |
 | US East (N. Virginia) |  Deployment Lambda             |   AWS Lambda                      | $0                | Invoke Mode (Buffered), Architecture (x86), Architecture (x86), Number of requests (30 per month), Amount of ephemeral storage allocated (512 MB) |
 | US East (N. Virginia) |  Canary Deployment Alarm   | Amazon CloudWatch | $0.1 | Number of Standard Resolution Alarm Metrics (1) |
 | US East (N. Virginia) |  NAT Gateway  | NAT Gateway | $33.3 | Number of NAT Gateways (1) |
 | US East (N. Virginia) | Sample App Queue | Amazon SQS | $0.9 | DT Inbound: Not selected (0 TB per month), DT Outbound: Internet (10 GB per month), Standard queue requests (1 million per month), Data transfer cost (0.9) |
-| Total | | | $73.34 | |
+| Total | | | $79.83 | |
 
 ### Supported AWS Regions
 
