@@ -36,5 +36,5 @@ export class CanaryContainerImageStack extends cdk.Stack {
 
 const app = new cdk.App();
 new CanaryContainerImageStack(app, process.env.CANARY_IMAGE_STACK!, {
-    description: 'Guidance for ECS Canary Deployments for Backend workloads on AWS (SO12345)'
+    description: 'Guidance for ECS Canary Deployments for Backend workloads on AWS (SO9453)'
 });
