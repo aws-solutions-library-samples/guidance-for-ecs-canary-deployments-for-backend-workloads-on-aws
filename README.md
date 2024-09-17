@@ -1,3 +1,6 @@
+>[!IMPORTANT] 
+>This Guidance requires the use of AWS [CodeCommit](https://docs.aws.amazon.com/codecommit/latest/userguide/welcome.html), which is no longer available to new customers. Existing customers of AWS CodeCommit can continue using and deploying this Guidance as normal.
+
 # Guidance for Canary deployments for Queue processing workloads in Amazon ECS
 
 This repository consists AWS Cloud Development Kit (CDK) code for `Canary Deployments for Queue processing workloads in Amazon ECS` guidance.
